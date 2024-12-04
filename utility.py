@@ -38,14 +38,6 @@ def transcribe_audio(audio_file):
 
 
 
-# def get_reply(prompt):
-#     response=client.chat.completions.create(
-#     model="gpt-3.5-turbo",
-#     messages=[
-#         {"role": "user", "content": f"Q: {prompt}\nA:"}
-#     ] )
-#     return response.choices[0].message.content
-
 import uuid  # For generating unique filenames
 # from gtts import gTTS
 import os

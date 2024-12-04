@@ -46,6 +46,7 @@ function handleEnter(event) {
   }
 }
 function addMessage(text, isUser = true, audioUrl = false) {
+  debugger;
   // const messageInput = document.getElementById("message-input");
   const chatContainer = document.getElementById("chat-container");
   if(isUser){
@@ -57,7 +58,9 @@ function addMessage(text, isUser = true, audioUrl = false) {
   if(!isUser && !audioUrl){
     const botMessage = document.createElement("div");
     botMessage.className = "flex";
-    botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${text.answer}</div>`;
+    const converter = new showdown.Converter();
+    const html = converter.makeHtml(text.answer);
+    botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${html}</div>`;
     chatContainer.appendChild(botMessage);
     
   }
@@ -137,7 +140,10 @@ async function sendMessage() {
     // Create a new bot message bubble with the response
     const botMessage = document.createElement("div");
     botMessage.className = "flex";
-    botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${data.answer}</div>`;
+    const converter = new showdown.Converter();
+    const html = converter.makeHtml(data.answer);
+    // botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${html}</div>`;
+    botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${html}</div>`;
     chatContainer.appendChild(botMessage);
 
     const audioDiv = document.querySelector('.flex.bot-audio');
