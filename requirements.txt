@@ -1,0 +1,15 @@
+Flask
+whisper
+openai-whisper
+ffmpeg
+langchain
+langchain-community
+python-dotenv
+pypdf
+openai
+faiss-cpu
+requests
+youtube_transcript_api
+unstructured
+tiktoken
+langchain_openai

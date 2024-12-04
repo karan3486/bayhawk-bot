@@ -1,0 +1,27 @@
+# Logs
+logs/
+*.log
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Python-related
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Node.js dependencies (if applicable)
+node_modules/
+
+# Environment variables
+.env
+
+# Other sensitive or build files
+*.sqlite3
+*.bak
+
+
+sfbubot/

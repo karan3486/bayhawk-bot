@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="/" target="_blank" />
+    <title>Chatbot UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="static/styles.css">
+  </head>
+  <body
+    class="flex justify-center items-center h-screen bg-gray-100"
+  >
+    <!-- Chat Container -->
+    <div
+      id="main-container"
+      class="w-96 h-[650px] bg-gray-300 border-2 border-[#003366] rounded-lg overflow-hidden custom-shadow flex flex-col"
+    >
+      <!-- Increased width and height -->
+      <!-- Header -->
+      <div class="header-menu-bg">
+        <div class="header-content">
+          <img
+            src="https://www.sfbu.edu/sites/default/files/logo.svg"
+            alt="SFBU Logo"
+            class="header-logo"
+          />
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+      <div
+        id="chat-container"
+        class="p-4 space-y-4 overflow-y-auto flex-grow mb-2 no-scrollbar"
+        style="background-image: url('static/images/bayhawk.png');"
+      >
+        <!-- Increased chat container height -->
+        <!-- Initial Bot Message -->
+        <div class="flex">
+          <div class="chat-bubble bot-bubble">Hello, how can I help you?</div>
+        </div>
+      </div>
+      <img
+        id="spinner"
+        src="static/images/bh2.gif"
+        alt="Loading..."
+        class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        style="height: 150px"
+      />
+      <!-- Message Input -->
+      <div class="recording-interface hidden">
+        <div class="progress-bar">
+          <div class="progress"></div>
+        </div>
+        <div class="controls">
+          <button class="control-btn cancel-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              />
+            </svg>
+          </button>
+  
+          <div class="sound-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+          </div>
+  
+          <div class="timer">0:00</div>
+  
+          <button class="control-btn send-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div
+        style="margin-top: 20px"
+        class="header-bg p-4 flex items-center justify-between"
+      >
+        <input
+          type="text"
+          id="message-input"
+          placeholder="Type your query here"
+          class="w-full p-2 rounded-l-lg text-sm outline-none focus:outline-none focus:ring-1 focus:ring-[#d6af7c]"
+          onkeypress="handleEnter(event)"
+          oninput="toggleButton()"
+        />
+        <button
+          class="button-bg text-white p-2 rounded-r-lg mic-btn" id="audio-button"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="white">
+            <path
+              d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"
+            ></path>
+          </svg>
+        </button>
+        <button
+          onclick="sendMessage()"
+          class="button-bg text-white p-2 rounded-r-lg hidden" id="send-button"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <script src="static/script.js"></script>
+  </body>
+</html>

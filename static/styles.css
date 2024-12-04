@@ -1,0 +1,288 @@
+/* body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  text-align: center;
+}
+
+#question {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+} */
+body{
+  background-color: beige;
+  background-image: url("images/sfbu_back.png");
+}
+
+/* Custom styles for SFBU-themed colors and chat bubbles */
+.chat-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+}
+.bot-bubble {
+  background-color: #d6af7c;
+  color: #333;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.user-bubble {
+  background-color: #003366; /* Navy Blue */
+  color: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+/* SFBU Theme Colors */
+.header-bg {
+  background-color: #003366; /* Navy Blue */
+}
+.button-bg {
+  background-color: #c59c65; /* Gold */
+}
+.header-menu-bg {
+  background-color: #c59c65; /* Gold */
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  color: #003366; /* Navy Blue for text */
+}
+.header-menu-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  height: 100%;
+  background-color: #003366; /* Navy Blue */
+  clip-path: polygon(0 0, 600% 0, 500% 700%);
+}
+.header-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+.header-logo {
+  /* width: 36px; */
+  height: 36px;
+  margin-right: 0.5rem;
+}
+/* Custom 3D Shadow */
+.custom-shadow {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 24px rgba(0, 0, 0, 0.15); /* Darker shadow for 3D effect */
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+#chat-container {
+  position: relative;
+  /* background-image: url("images\\bayhawk.png"); */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 150px; /* Adjust size as needed */
+}
+.input-field {
+width: 100%;
+padding: 0.5rem;
+border: 2px solid #ccc;
+border-radius: 0.5rem;
+outline: none;
+font-size: 0.875rem;
+transition: border-color 0.3s ease;
+}
+.recording-interface {
+position: relative;
+bottom: 0;
+left: 0;
+right: 0;
+top: 90px;
+padding: 15px;
+background: #003366;
+transition: transform 0.3s ease;
+box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+width: 24rem;
+margin: 0 auto;
+/* margin-bottom: 49px; */
+border-radius: 0px 0px 5px 5px;
+}
+
+.recording-interface.hidden {
+transform: translateY(100%);
+margin-bottom: 0px;
+}
+.progress-bar {
+height: 4px;
+background:rgb(209 213 219);
+border-radius: 2px;
+margin-bottom: 15px;
+position: relative;
+}
+
+.progress {
+position: absolute;
+height: 100%;
+background: #c59c65;
+border-radius: 2px;
+width: 0%;
+transition: width 8s linear;
+}
+.controls {
+display: flex;
+justify-content: space-between;
+padding: 0 20px;
+align-items: center;
+}
+
+.control-btn {
+width: 50px;
+height: 50px;
+border-radius: 50%;
+border: none;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-btn {
+/* background: #ff3b30 !important;  */ 
+background: #bd9258 !important; 
+}
+
+.send-btn {
+/* background: #34c759;  */
+background: #105aa5; 
+}
+.sound-wave {
+display: none;
+gap: 3px;
+height: 30px;
+align-items: center;
+}
+
+.sound-wave.active {
+display: flex;
+}
+
+.wave-bar {
+width: 3px;
+background: #c59c65;
+border-radius: 3px;
+animation: wave 1s ease-in-out infinite;
+}
+
+@keyframes wave {
+0%,
+100% {
+height: 4px;
+}
+50% {
+height: 20px;
+}
+}
+.timer {
+color: #fff;
+font-size: 14px;
+min-width: 50px;
+text-align: center;
+}
+
+.audio-player {
+display: flex;
+align-items: center;
+gap: 3px;
+/* background: #333; */
+/* padding: 10px; */
+border-radius: 10px;
+width: 100%;
+}
+
+.audio-player button {
+background: none;
+border: none;
+color: white;
+cursor: pointer;
+}
+
+.audio-player .play-btn {
+width: 25px;
+height: 25px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: #003366;
+border-radius: 50%;
+}
+.audio-timer,
+.audio-duration {
+font-size: 0.8rem;
+color: #003366;
+}
+.progress-slider {
+flex: 1;
+-webkit-appearance: none;
+height: 5px;
+background: #444;
+border-radius: 5px;
+outline: none;
+cursor: pointer;
+}
+
+.progress-slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 10px;
+height: 10px;
+background: #003366;
+border-radius: 50%;
+cursor: pointer;
+}
+
+.progress-slider::-moz-range-thumb {
+width: 10px;
+height: 10px;
+background: #003366;
+border-radius: 50%;
+cursor: pointer;
+}
+
+.play-btn {
+background: none;
+border: none;
+color: white;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 25px;
+height: 25px;
+border-radius: 50%;
+background: #003366;
+}
+
+.input-field:focus {
+border-color: #c59c65;
+}
+
+
+/* Ensure chat messages are not blurred */
+#main-container .chat-bubble {
+  position: relative;
+  /* z-index: 1; */
+} */
