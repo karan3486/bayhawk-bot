@@ -1,39 +1,39 @@
 ## MCQ 1
-Question: According to the text, which of the following is NOT a rule for Python variables?
-A) A variable name must start with a letter or the underscore character.
-B) A variable name can start with a number.
-C) A variable name can only contain alpha-numeric characters and underscores.
-D) Variable names are case-sensitive.
-Correct Answer: B) A variable name can start with a number.
+Question: What does IDLE represent in Python programming?
+A) A function for opening files
+B) A Python Editor
+C) The method to print output to the screen
+D) A built-in Python function
+Correct Answer: B) A Python Editor
 
 ## MCQ 2
-Question: What are the numeric types in Python mentioned in the passage?
-A) Int, Float, Double.
-B) Int, Double, Complex.
-C) Int, Float, Complex.
-D) Byte, Int, Float.
-Correct Answer: C) Int, Float, Complex.
+Question: According to the rules for Python variables, which of the following is true?
+A) A variable name cannot start with a letter
+B) A variable name can start with a number
+C) Variable names are not case-sensitive
+D) A variable name can only contain alpha-numeric characters and underscores
+Correct Answer: D) A variable name can only contain alpha-numeric characters and underscores
 
 ## MCQ 3
-Question: What is unique about string declaration in Python as per the given text?
-A) Strings can be declared with single or double quotation marks.
-B) Strings can only be declared with single quotation marks.
-C) Strings can only be declared with double quotation marks.
-D) None of the above
-Correct Answer: A) Strings can be declared with single or double quotation marks.
+Question: What are the three numeric types in Python mentioned in the text?
+A) double, float, complex
+B) int, float, complex
+C) int, double, long
+D) char, int, float
+Correct Answer: B) int, float, complex
 
 ## MCQ 4
-Question: How does Python handle the extension of its functionality?
-A) All functionality is built into Python's core.
-B) Python was designed to be highly extensible.
-C) Python functionality can only be extended by installing additional software.
-D) None of the above.
-Correct Answer: B) Python was designed to be highly extensible.
+Question: What does the Python function print(type(x)) do?
+A) It changes the type of x
+B) It prints the value of x
+C) It prints the data type of x
+D) It creates a new variable named x
+Correct Answer: C) It prints the data type of x
 
 ## MCQ 5
-Question: What does the Python Standard Library consist of?
-A) Different modules for file handling and basic mathematics.
-B) Predefined functions for different topics or areas such as mathematics, plotting, handling database systems.
-C) Contains different Modules, Libraries or Packages.
-D) All of the above.
-Correct Answer: D) All of the above.
+Question: How can you import only the sin() function from the math library in Python?
+A) from sin import math
+B) import sin from math
+C) import math.sin
+D) from math import sin
+Correct Answer: D) from math import sin

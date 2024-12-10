@@ -9,7 +9,7 @@ from config import Config
 import os
 from fpdf import FPDF 
 import pdfplumber
-import docx
+from docx import Document
 from pptx.util import Pt
 from pptx import Presentation
 import requests
@@ -160,7 +160,7 @@ def extract_text_from_file(file_path):
             text = ''.join([page.extract_text() for page in pdf.pages])
         return text
     elif ext == 'docx':
-        doc = docx.Document(file_path)
+        doc = Document(file_path)
         text = ' '.join([para.text for para in doc.paragraphs])
         return text
     elif ext == 'txt':
