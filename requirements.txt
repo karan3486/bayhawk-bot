@@ -13,4 +13,6 @@ youtube_transcript_api
 unstructured
 tiktoken
 langchain_openai
-unstructured[pdf]
+fpdf
+pdfplumber
+docx

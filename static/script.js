@@ -45,7 +45,7 @@ function handleEnter(event) {
     sendMessage();
   }
 }
-function addMessage(text, isUser = true, audioUrl = false) {
+function addMessage(text, isUser = true, audioUrl = false,isdefault = false,isSubmenu = false){
   debugger;
   // const messageInput = document.getElementById("message-input");
   const chatContainer = document.getElementById("chat-container");
@@ -55,11 +55,15 @@ function addMessage(text, isUser = true, audioUrl = false) {
     userMessage.innerHTML = `<div class="chat-bubble user-bubble">${text}</div>`;
     chatContainer.appendChild(userMessage);
   }
-  if(!isUser && !audioUrl){
+  if(!isUser && !audioUrl && !isdefault){
     const botMessage = document.createElement("div");
     botMessage.className = "flex";
     const converter = new showdown.Converter();
-    const html = converter.makeHtml(text.answer);
+    html = text
+    if(text.answer){
+      html = converter.makeHtml(text.answer);
+    }
+    
     botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${html}</div>`;
     chatContainer.appendChild(botMessage);
     
@@ -86,23 +90,19 @@ function addMessage(text, isUser = true, audioUrl = false) {
           chatContainer.appendChild(botMessage);
 
     }
+    debugger;
+    if(isdefault){
+      const botMessage = document.createElement("div");
+      botMessage.className = 'chat-bubble-auto bot-bubble-auto'
+      // botMessage = `<div class="chat-bubble bot-bubble">${text}</div>`;
+      botMessage.innerHTML = text
+      chatContainer.appendChild(botMessage);
+    }
+    if(isSubmenu){
+
+    }
   chatContainer.scrollTop = chatContainer.scrollHeight;
   
-
-  // const messageDiv = document.createElement("div");
-  // messageDiv.className = `message ${isUser ? "user" : "bot"}`;
-
-  // if (text) {
-  //   messageDiv.textsContent = text; // Add text if provided
-  // }
-
-  // if (audioUrl) {
-  //   const audioPlayer = createAudioPlayer(audioUrl);
-  //   messageDiv.appendChild(audioPlayer); // Add audio player if audio URL is provided
-  // }
-
-  // messagesContainer.appendChild(messageDiv);
-  // messageDiv.scrollIntoView({ behavior: "smooth" });
 }
 
 async function sendMessage() {
@@ -110,6 +110,10 @@ async function sendMessage() {
   toggleButton();
   const messageInput = document.getElementById("message-input");
   const chatContainer = document.getElementById("chat-container");
+  const languageDropdown = document.getElementById('language');
+    
+    // Get the selected value
+  const selectedLanguage = languageDropdown.value;
 
   // Get the message text and clear the input
   const messageText = messageInput.value.trim();
@@ -133,7 +137,7 @@ async function sendMessage() {
     const response = await fetch("/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: messageText , isRecord: isRecord}),
+      body: JSON.stringify({ question: messageText , isRecord: isRecord,language:selectedLanguage}),
     });
     const data = await response.json();
 
@@ -163,6 +167,8 @@ async function sendMessage() {
 
     // Scroll to the latest message
     chatContainer.scrollTop = chatContainer.scrollHeight;
+    sendData(user.name,user.email,'User',messageText);
+    sendData(user.name,user.email,'Bot',data.answer);
   } catch (error) {
     console.error("Error fetching bot response:", error);
   } finally {
@@ -171,6 +177,10 @@ async function sendMessage() {
     toggleBlur();
     toggleButton();
     isRecord = false;
+    chatCount++;
+    if(chatCount>limit){
+      toogleEscalate();
+    }
   }
 }
 
@@ -191,16 +201,44 @@ const recordingInterface = document.querySelector(".recording-interface");
 const micButton = document.querySelector(".mic-btn");
 const messagesContainer = document.querySelector(".messages");
 let count = 0;
-// function showLoader() {
-//   let loaderDiv = document.querySelector(".loading-gif");
-//   loaderDiv.style.display = "block";
-// }
+var chatCount = 0;
+var limit = 9;
+var isGuest = false;
+var isStudent = false;
+const universityInfo = {
+  "Admission": {
+    "Undergraduate": "https://www.sfbu.edu/admissions/undergraduate",
+    "Graduate": "https://www.sfbu.edu/admissions/graduate",
+    "International": "https://www.sfbu.edu/admissions/international",
+    "Startup Scholars": "https://www.sfbu.edu/admissions/startup-scholars",
+    "Transfer": "https://www.sfbu.edu/admissions/transfer",
+    "Admissions Staff": "https://www.sfbu.edu/admissions/meet-our-admissions-staff",
+    "Housing": "https://www.sfbu.edu/student-life-support/residential-life",
+    "Admitted Students": "https://www.sfbu.edu/admissions/admitted-students",
+    "Important Dates": "https://www.sfbu.edu/important-dates",
+    "FAQs": "https://www.sfbu.edu/admissions/faqs",
+  },
+  "Financial Support": {
+    "Student Employment": "https://www.sfbu.edu/financial-support/student-employment",
+    "Tuition & Costs": "https://www.sfbu.edu/financial-support/tuition-and-costs",
+    "Scholarships & Financial Aid": "https://www.sfbu.edu/financial-support/tuition-scholarships-and-financial-aid",
+    
+    
+  },
+  "Request Information": "https://www.sfbu.edu/request-information",
+  "Schedule Visit": "https://www.sfbu.edu/admissions/visit",
+  "Campus Life": "https://www.sfbu.edu/why-we-are-here/our-campus",
+  "Apply": "https://www.sfbu.edu/apply",
+};
 
-// // Function to remove the loader
-// function removeLoader() {
-//   let loaderDiv = document.querySelector(".loading-gif");
-//   loaderDiv.style.display = "none";
-// }
+const studentmenu = {
+  'Course Registration':'',
+  'Housing':'https://www.sfbu.edu/student-life-support/residential-life',
+  'Scholorships':'https://www.sfbu.edu/financial-support/tuition-scholarships-and-financial-aid',
+  'SFBU Online Store':'https://sfbugear.merchorders.com/',
+  'Employement':'https://www.sfbu.edu/financial-support/student-employment',
+  'IT Support':'https://askit-sfbu.freshdesk.com/support/solutions'
+}
 
 // Function to create an audio player element
 function createAudioPlayer(audioUrl) {
@@ -334,6 +372,7 @@ async function startRecording() {
     timer = 0;
     // micButton.classList.add("hidden");
     recordingInterface.classList.remove("hidden");
+    document.getElementById('menu-options').classList.add('hidden')
     startProgressAndTimer();
     soundWave.classList.add("active");
   } catch (err) {
@@ -381,6 +420,7 @@ function stopRecording() {
   soundWave.classList.remove("active");
 //   micButton.classList.remove("hidden");
   recordingInterface.classList.add("hidden");
+  document.getElementById('menu-options').classList.remove('hidden')
   timerDisplay.textContent = "0:00";
 }
 
@@ -528,3 +568,333 @@ document
     count++;
     counter.textContent = `Hello, ${count}, ${count + 1}, ${count + 2}`;
   });
+
+  function OpenBot(){
+    debugger;
+    if(!isGuest && !isStudent){
+      toggleBlur();
+      
+    }
+    
+    // toggleBlur
+    if(isGuest){
+      document.getElementById('login-type').classList.add('hidden');
+    }
+    document.getElementById('main-container').classList.remove('hidden');
+    document.getElementById('bot-container-box').classList.add('hidden');
+  }
+
+  function CloseBot(){
+    document.getElementById('main-container').classList.add('hidden');
+    document.getElementById('bot-container-box').classList.remove('hidden');
+  }
+  function LoginGuest(){
+    debugger;
+    isGuest = true;
+    showEmailToast();
+    
+  }
+  function LoginStudent(){
+    debugger;
+    isStudent = true;
+    showStudentToast();
+    
+  }
+  // Show the toast popup
+function showEmailToast() {
+  const toast = document.getElementById('email-toast');
+  toast.classList.add('show');
+}
+function showStudentToast() {
+  const toast = document.getElementById('student-toast');
+  toast.classList.add('show');
+}
+
+function sendData(name,email,type,content) {
+  // Prepare the data to send
+  const conversationData = {
+      name: name,
+      email: email,
+      type: type, // 'Bot' or 'User'
+      content: content
+  };
+
+  // Send a POST request to the API
+  fetch('/add_conversation', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(conversationData),
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log('Success:', data);
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+
+function getCurrentUser(){
+  email =''
+  let name = document.getElementById('visitor-name').value;
+  if(document.getElementById('user-email').value){
+    email = document.getElementById('user-email').value
+  }
+  if(document.getElementById('user-name').value){
+   name = document.getElementById('user-name').value
+  }
+
+  return {'name':name,'email':email}
+}
+function sendmailtovisitor(name,email) {
+  debugger;
+  // Prepare the data to send
+  let users = getCurrentUser();
+  const details = {
+      name: users.name,
+      email: users.email
+  };
+
+  // Send a POST request to the API
+  fetch('/mailtoVisitor', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(details),
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log('Success:', data);
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+function sendmailtoAdmin(email) {
+  // Prepare the data to send
+  let user = getCurrentUser();
+  const details = {
+      email: user.email
+  };
+
+  // Send a POST request to the API
+  fetch('/mailtoAdmin', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(details),
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+  })
+  .then(data => {
+      console.log('Success:', data);
+  })
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+
+function EndChat(){
+  ClearChat();
+  CloseBot();
+  if(isGuest){
+    sendmailtoAdmin();
+  }
+}
+
+function escalate_chat(){
+  if(isGuest){
+    sendmailtoAdmin();
+  }
+}
+function ClearChat(){
+  // Select the chat-container
+  debugger;
+const chatContainer = document.getElementById('chat-container');
+
+// Get all child divs of chat-container
+const childDivs = chatContainer.querySelectorAll('div');
+
+// Loop through the child divs
+childDivs.forEach(div => {
+  debugger;
+  // Check if the div is neither guest-menu nor student-menu
+  if (!div.classList.contains('default')) {
+    // Remove the div
+    div.remove();
+  }
+});
+document.getElementById('chat-escalate').classList.add('hidden');
+}
+
+
+// Get the user's email on submit
+document.getElementById('submit-email').addEventListener('click', function () {
+  const emailInput = document.getElementById('user-email').value;
+
+  // Validate email format
+  if (validateEmail(emailInput)) {
+    // Hide the toast
+    document.getElementById('email-toast').classList.remove('show');
+    document.getElementById('login-type').classList.add('hidden');
+    document.getElementById('controller-footer').classList.remove('hidden');
+    document.getElementById('menu-options').classList.remove('hidden');
+    showGuestMenu();
+    toggleBlur();
+    user = getCurrentUser();
+    sendData(user.name,user.email,'User','Chat Initiated');
+    sendmailtovisitor();
+  } else {
+    alert('Please enter a valid email address.');
+  }
+});
+
+// Email validation function
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+document.getElementById('submit-cred').addEventListener('click', function () {
+  const emailInput = document.getElementById('user-name').value;
+    // Hide the toast
+    document.getElementById('student-toast').classList.remove('show');
+    document.getElementById('login-type').classList.add('hidden');
+    document.getElementById('controller-footer').classList.remove('hidden');
+    document.getElementById('menu-options').classList.remove('hidden');
+    showStudentMenu();
+    toggleBlur();
+    let user = getCurrentUser();
+    sendData(user.name,user.email,'User','Chat Initiated');
+ 
+});
+
+
+function ShowSubmenu(elem){
+  debugger
+  // toogleEscalate();
+  const menu = elem.querySelector(".opt-title"); // Select the <p> tag with the class 'opt-title'
+  const menuValue = menu.textContent.trim();
+  addMessage(menuValue);
+  if(menuValue=='Admission' || menuValue=='Financial Support'){
+    addMessage('Please select the option that best describes your query, or feel free to type it if not listed.',false,false,false,false)
+  }
+  let submenu = "";
+  if (universityInfo[menuValue]) {
+    const submenuItems = universityInfo[menuValue];
+
+    if (typeof submenuItems === "object") {
+      // Generate submenu for nested items with a maximum of 2 divs per flex
+      const entries = Object.entries(submenuItems);
+      for (let i = 0; i < entries.length; i += 2) {
+        submenu += `<div class="flex">`;
+        for (let j = i; j < i + 2 && j < entries.length; j++) {
+          const [title, url] = entries[j];
+          submenu += `
+            <div class="main-menu" onclick="subMessage('${title}','${url}')">
+              <p class="opt-title">${title}</p>
+            </div>`;
+        }
+        submenu += `</div>`;
+      }
+    } else {
+      // Handle direct links (not nested)
+      // let msg= 'Please visit the URL or type your query below if you need further assistance.';
+      // submenu = `<div class="main-menu"><p class="opt-title">${msg}: <a href="${submenuItems}" target="_blank">${menuValue}</a></p></div>`;
+      subMessage(menuValue,submenuItems,true);
+      return
+    }
+  } else {
+    submenu = `<p class="opt-title">No submenu available for ${menuValue}</p>`;
+  }
+    addMessage(submenu,isUser = false, audioUrl = false,isdefault = true)
+    sendData(user.name,user.email,'User',menuValue);
+    chatCount++;
+    if(chatCount>limit){
+      toogleEscalate();
+    }
+      
+}
+function ShowStudentSubmenu(elem){
+  debugger
+  // toogleEscalate();
+  const menu = elem.querySelector(".opt-title"); // Select the <p> tag with the class 'opt-title'
+  const menuValue = menu.textContent.trim();
+  addMessage(menuValue);
+  if(menuValue=='Course Registration' || menuValue=='Clubs'){
+    addMessage(`Please type your query regarding ${menuValue}.`,false,false,false,false)
+    return
+  }
+  let submenu = "";
+  const submenuItems = studentmenu[menuValue];
+  subMessage(menuValue,submenuItems,true);
+    // addMessage(submenu,isUser = false, audioUrl = false,isdefault = true)
+    sendData(user.name,user.email,'User',menuValue);
+    chatCount++;
+    if(chatCount>limit){
+      toogleEscalate();
+    }
+      
+}
+function subMessage(title,url,fromMenu=false){
+  if(!fromMenu){
+    addMessage(title);
+  }
+   const chatContainer = document.getElementById("chat-container");
+   const botMessage = document.createElement("div");
+    botMessage.className = "flex";
+    let msg = 'Please visit the URL or type your query below if you need further assistance.';
+    submenu = `<br>Link: <a class="link-url" href="${url}" target="_blank">${title}</a></p>`;
+
+    botMessage.innerHTML = `<div class="chat-bubble bot-bubble">${msg}${submenu}</div>`;
+    chatContainer.appendChild(botMessage);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    sendData(user.name,user.email,'User',title);
+    sendData(user.name,user.email,'Bot',msg+' '+url);
+    chatCount++;
+    if(chatCount>limit){
+      toogleEscalate();
+    }
+
+}
+
+function showGuestMenu(){
+  document.getElementById('guest-menu').classList.remove('hidden');
+}
+function showStudentMenu(){
+  document.getElementById('student-menu').classList.remove('hidden');
+}
+
+function toogleEscalate(){
+  let elem = document.getElementById('chat-escalate');
+  if(elem.classList.contains('hidden')){
+    elem.classList.remove('hidden');
+  }
+  else{
+    elem.classList.add('hidden');
+  }
+}
+
+function CloseVisiterType(){
+  debugger
+  document.getElementById('email-toast').classList.remove('show');
+  document.getElementById('student-toast').classList.remove('show');
+}

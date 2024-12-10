@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="/" target="_blank" />
+    <title>Chatbot UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+  </head>
+  <style>
+    body{
+  background-color: beige;
+  background-image: url("static/images/sfbu_faculty.png") !important;
+  background-size: cover; /* Ensures the image covers the entire screen */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-position: center; /* Centers the image */
+  background-attachment: fixed; /* Keeps the image fixed on scroll */
+}
+  </style>
+  <body
+    class="flex justify-center items-center h-screen bg-gray-100"
+  >
+    <!-- Chat Container -->
+    <div
+      id="main-container"
+      class="w-[520px] h-[850px] bg-gray-300 border-2 border-[#003366] rounded-lg overflow-hidden custom-shadow flex flex-col"
+    >
+      <!-- Increased width and height -->
+      <!-- Header -->
+      <div class="header-menu-bg">
+        <div class="header-content">
+          <img
+            src="https://www.sfbu.edu/sites/default/files/logo.svg"
+            alt="SFBU Logo"
+            class="header-logo"
+          />
+          <div style="
+          margin-left: 28rem;
+          z-index: 1;cursor: pointer;
+      " onclick="CloseBot();"><svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+                  </svg></div>
+        </div>
+      </div>
+
+      <!-- Chat Messages -->
+    
+      <div
+        id="chat-container"
+        class="p-4 space-y-4 overflow-y-auto flex-grow mb-2 no-scrollbar"
+        style="background-image: url('static/images/bayhawk.png');"
+      >
+        <!-- Increased chat container height -->
+        <!-- Initial Bot Message -->
+        <div class="chat-bubble-auto-fac bot-bubble-auto-fac default">
+          <div class="flex default">
+          <div class="main-menu default" id="opt-mcq" onclick="ShowFileUpload(this);">
+            <p class="opt-title-fac">MCQ Generator</p>
+          </div>
+          <div class="main-menu default" id="opt-ppt"  onclick="ShowFileUpload(this);">
+            <p class="opt-title-fac">PPT Creator</p>
+          </div>
+         
+          <div class="main-menu default" id="opt-syllabus" onclick="ShowFileUpload(this);">
+            <p class="opt-title-fac">Syllabus Designer</p>
+          </div>
+          <div class="main-menu default" id="opt-it" onclick="ShowFileUpload(this);">
+            <p class="opt-title-fac">IT Support</p>
+          </div>
+        </div>
+        </div>
+        <hr style="border-top: 1px solid #003366;">
+       
+      </div>
+        <!-- Toast Popup -->
+
+
+      <img
+        id="spinner"
+        src="static/images/bh2.gif"
+        alt="Loading..."
+        class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        style="height: 150px"
+      />
+      <button class="new-fac-chat" id="new-fac-chat" onclick="window.location.reload();" style="/* background-color: #bfb03c; */margin: auto;color: darkslateblue;"><p>New Chat</p></button>
+
+      <!-- Message Input -->
+      <div
+        class="header-bg p-4 flex items-center justify-between" id="controller-footer"
+      >
+      
+      <button class="" id="uploadButton" style="padding-right: 5px;margin-right: 5px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 7C9 4.23858 11.2386 2 14 2C16.7614 2 19 4.23858 19 7V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9C5 8.44772 5.44772 8 6 8C6.55228 8 7 8.44772 7 9V15C7 17.7614 9.23858 20 12 20C14.7614 20 17 17.7614 17 15V7C17 5.34315 15.6569 4 14 4C12.3431 4 11 5.34315 11 7V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V9C13 8.44772 13.4477 8 14 8C14.5523 8 15 8.44772 15 9V15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15V7Z" fill="white"></path></svg>
+      </button>
+      <input type="file" id="fileInput" style="display: none;" />
+        <input
+          type="text"
+          id="message-input"
+          placeholder="Type your query here"
+          class="w-full p-2 rounded-l-lg text-sm outline-none focus:outline-none focus:ring-1 focus:ring-[#d6af7c]"
+          onkeypress="handleEnter(event)"
+        />
+        <button
+          onclick="sendFacultyMessage()"
+          class="button-bg text-white p-2 rounded-r-lg" id="send-button"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+        <button
+          onclick="Generate()"
+          class="button-bg text-white p-2 rounded-r-lg hidden" style="font-size: 13.67px;" id="gen-button"
+        >Generate
+        </button>
+      </div>
+      
+    </div>
+
+    <script src="static/faculty.js"></script>
+  </body>
+</html>

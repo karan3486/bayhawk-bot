@@ -1,174 +1,28 @@
-from flask import Flask, render_template, request, jsonify,send_file
+from flask import Flask, render_template, request, jsonify,send_file,render_template_string
 from config import Config
-from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
 # from openai import OpenAI
-from langchain.chains import ConversationalRetrievalChain
-from langchain_community.document_loaders import PyPDFLoader, UnstructuredURLLoader
-from langchain.memory import SimpleMemory
 import os
 from utility import transcribe_audio, generate_tts
 import os
-from langchain.schema import AIMessage, HumanMessage, SystemMessage
-from langchain_core.prompts import ChatPromptTemplate ,MessagesPlaceholder
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain,create_history_aware_retriever
-from langchain.chains import create_retrieval_chain
-from langchain_core.documents import Document
+from langchain.schema import AIMessage, HumanMessage
+from database import db
+from utils.utility import *
+from utils.load_data import *
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-from langchain_astradb import AstraDBVectorStore
-ASTRA_DB_API_ENDPOINT=app.config['ASTRA_DB_API_ENDPOINT']
-ASTRA_DB_APPLICATION_TOKEN=app.config['ASTRA_DB_TOKEN']
-ASTRA_DB_KEYSPACE="default_keyspace"
+# from langchain_astradb import AstraDBVectorStore
+# ASTRA_DB_API_ENDPOINT=app.config['ASTRA_DB_API_ENDPOINT']
+# ASTRA_DB_APPLICATION_TOKEN=app.config['ASTRA_DB_TOKEN']
+# ASTRA_DB_KEYSPACE="default_keyspace"
+db.create_table()
 
-
+ 
 # Initialize embedding model and LLM
-embedding_model = OpenAIEmbeddings(api_key=app.config['OPENAI_API_KEY'])
-llm = ChatOpenAI(model = 'ft:gpt-4o-2024-08-06:personal:sfbu:AaYozmiq',temperature=0.4,api_key=app.config['OPENAI_API_KEY'])
-
-def get_youtube_id(url):
-    parsed_url = urlparse(url)
-    if parsed_url.hostname == 'youtube':
-        return parsed_url.path[1:]
-    elif parsed_url.hostname in ('www.youtube.com', 'youtube.com'):
-        return parse_qs(parsed_url.query).get('v', [None])[0]
-    return None
-youtube_urls = [
-    'https://www.youtube.com/watch?v=kuZNIvdwnMc',
-    # Add more URLs here if needed
-]
-from youtube_transcript_api import YouTubeTranscriptApi
-from urllib.parse import urlparse, parse_qs
-from langchain.schema import Document
-def get_youtube_docs(youtube_urls):
-    transcript = None
-    for url in youtube_urls:
-        youtube_id = get_youtube_id(url)
-        if youtube_id:
-            try:
-                transcript = YouTubeTranscriptApi.get_transcript(youtube_id)
-                transcript_text = " ".join([t['text'] for t in transcript])
-                return Document(page_content=transcript_text, metadata={"source": f"YouTube video {youtube_id}"})
-                print(f"Transcript for video ID {youtube_id} added.")
-            except Exception as e:
-                print(f"Could not retrieve transcript for video ID {youtube_id}: {e}")
-        else:
-            print(f"Invalid YouTube URL: {url}")
-# Function to load documents
-def load_documents():
-    docs = []
-    for filename in os.listdir('data'):
-    # Check if the file is a PDF
-        if filename.endswith(".pdf"):
-            # Construct the full file path
-            file_path = os.path.join('data', filename)
-            
-            # Load the PDF and extend the docs list
-            pdf_loader = PyPDFLoader(file_path)
-            docs.extend(pdf_loader.load())
-        elif filename.endswith(".txt"):
-            with open(os.path.join('data', filename), 'r', encoding='utf-8') as txt_file:
-                # Read the text content and add it as a document
-                content = txt_file.read()
-                document = Document(
-                    page_content=content,
-                    metadata={"source": filename}
-                )
-                docs.append(document)
-    with open('data/urls.txt', 'r') as file:
-        urls = file.read().splitlines()
-        loader = UnstructuredURLLoader(urls=urls)
-        data = loader.load()
-        # print(data)
-        docs.extend(data)
-    return docs
-
-# Create vectorstore from documents
-documents = load_documents()
-vectorstore = FAISS.from_documents(documents, embedding_model)
-
-# Use SimpleMemory instead of ConversationMemory
-conversation_memory = SimpleMemory()
-system_prompt = (
-    '''As an academic support assistant for San Francisco Bay University (SFBU), your primary role is to help students, staff, and visitors by providing clear and accurate information about the university's resources, policies, and services.
-
-- **Conciseness and Professionalism:** Ensure your responses are concise, professional, and specific to SFBU.
-- **Contextual Relevance:** Use the provided context to answer queries. Avoid giving unrelated or speculative information. 
-  - Note: Before responding, determine whether the user's query is explicitly related to SFBU's resources, policies, or services. If not, use the predefined response without further processing.
-- **Limitation Acknowledgment:** If a question is unrelated to SFBU or if you do not know the answer, respond with: "I'm sorry, I can only assist with SFBU support-related queries." Refrain from further processing.
-- **Query Clarification:** Feel free to ask follow-up questions to clarify any vague queries.
-
-# Steps
-
-0. **Check Query Relevance:** Determine whether the user's query is related to SFBU resources, policies, or services. If it is unrelated, use the predefined response and stop further processing.
-1. **Analyze the Query:** Understand the user's question or request clearly. If the query seems vague, engage in clarifying questions.
-2. **Contextual Reference:** Use relevant information from the given context to answer the question accurately.
-3. **Response Construction:** Formulate your answer in a concise and professional manner.
-4. **Handle Unknown or Irrelevant Queries:** 
-   - If the query is unrelated, respond: "I'm sorry, I can only assist with SFBU support-related queries."
-   - If the query is SFBU-related but cannot be answered, respond: "I'm sorry, I don't have the information you're looking for. Please contact SFBU support for further assistance."
-
-# Output Format
-
-- Responses should be in .md markdown format only content, concise, and specifically relevant to SFBU.
-- If applicable, use one of the predefined responses as outlined above.
-
-# Notes
-
-- Maintain the primary focus on queries relating to SFBU resources, policies, and services.
-- Avoid discussing topics not directly related to SFBU to ensure the information provided remains pertinent and accurate.
-'''
-"context:"
-"{context}"
-)
-
-# chat_prompt = ChatPromptTemplate.from_messages(
-#     [
-#         ("system", system_prompt),
-#         ("human", "{input}"),
-#     ]
-# )
-
-# Create conversational retrieval chain
-qa_chain = ConversationalRetrievalChain.from_llm(
-    llm=llm,
-    retriever=vectorstore.as_retriever(),
-    memory=conversation_memory
-)
-# question_answering_chain=create_stuff_documents_chain(llm, chat_prompt)
-# rag_chain = create_retrieval_chain(vectorstore.as_retriever(), question_answering_chain)
-chat_history = []
-retriever_prompt = (
-    "Given a chat history and the latest user question which might reference context in the chat history,"
-    "formulate a standalone question which can be understood without the chat history."
-    "Do NOT answer the question, just reformulate it if needed and otherwise return it as is."
-)
-contextualize_q_prompt  = ChatPromptTemplate.from_messages(
-    [
-        ("system", retriever_prompt),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}"),
-
-
-     ]
-)
-history_aware_retriever = create_history_aware_retriever(llm,vectorstore.as_retriever(search_kwargs={'k': 3}),contextualize_q_prompt)
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-qa_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", system_prompt),
-        MessagesPlaceholder("chat_history"),
-        ("human", "{input}"),
-    ]
-)
-question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 chat_history_old=[]
+chat_history = []
+
 def get_reply(question):
     global chat_history
     global chat_history_old
@@ -204,33 +58,33 @@ def get_reply(question):
         chat_history = chat_history[2:]
     return response
 
-def moderate(input):
-    moderation = llm.moderations.create(input=input)
-    res = handle_moderation_response(moderation)
-    return res
+# def moderate(input):
+#     moderation = llm.moderations.create(input=input)
+#     res = handle_moderation_response(moderation)
+#     return res
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/sfbu')
+@app.route('/faculty')
 def sfbu():
-    return render_template('index_2.html')
+    return render_template('index_faculty.html')
 
 @app.route('/ask', methods=['POST'])
 def ask():
     question = request.json.get("question")
     isRecord = request.json.get("isRecord")
-    # response = get_reply(question)
-    # global chat_history
-    # inputs = {
-    #     "question": question,
-    #     "chat_history": chat_history
-    # }
-    # moderate(question)
+    language = request.json.get("language")
+    if language and language.lower()!='english':
+        question =  Langtranslate(question,'English')
     
     try:
         response = get_reply(question)
+        print(vectorstore.as_retriever(search_type="mmr",search_kwargs={'k': 5, 'fetch_k': 50}).invoke(question))
+        answer = response['answer']
+        if language and language.lower()!='english':
+            answer = Langtranslate(answer,language)
         
         if isRecord:
             tts_audio_path = generate_tts(response['answer'])
@@ -238,7 +92,7 @@ def ask():
     except Exception as e:
         print(f"Error during retrieval: {e}")
         return jsonify({"error": "Error during retrieval"}), 500
-    return jsonify({"answer": response['answer']})
+    return jsonify({"answer": answer})
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
@@ -272,36 +126,188 @@ def translate():
 def audio(filename):
     return send_file(f"./static/audio/{filename}")
 
-import json
 
-def handle_moderation_response(moderation_output):
-    # Extract moderation results
-    result = moderation_output["results"][0]
-    flagged = result["flagged"]
-    categories = result["categories"]
-    category_scores = result["category_scores"]
-    
-    if flagged:
-        # Construct response for flagged content
-        response = {
-            "status": "error",
-            "message": "Your input has been flagged for violating content policies.",
-            "flagged_categories": [
-                category for category, flagged in categories.items() if flagged
-            ],
-            "category_scores": {
-                category: score for category, score in category_scores.items() if score > 0.5
-            }
-        }
+# Endpoint to add a conversation
+@app.route('/add_conversation', methods=['POST'])
+def add_conversation():
+    # Get data from the request
+    data = request.json
+    name = data.get('name')
+    email = data.get('email', None)  # Email can be optional
+    message_type = data.get('type')  # 'Bot' or 'User'
+    content = data.get('content')
+
+    # Validate required fields
+    if not all([name, message_type, content]):
+        return jsonify({'error': 'Missing required fields: name, type, and content are mandatory.'}), 400
+
+    # Insert the data into the database
+    try:
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+        INSERT INTO conversation (name, email, type, content)
+        VALUES (?, ?, ?, ?)
+        ''', (name, email, message_type, content))
+        conn.commit()
+        conn.close()
+
+        return jsonify({'message': 'Conversation added successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to add conversation: {str(e)}'}), 500
+
+@app.route('/mailtoAdmin', methods=['POST'])
+def mailToAdmin():
+    email = request.json.get("email")    
+    try:
+        startMailSending(email)
+    except Exception as e:
+        print(f"Error during mail sending: {e}")
+    return jsonify({"status": 'mail send'})
+
+@app.route('/mailtoVisitor', methods=['POST'])
+def mailToVisitor():
+    email = request.json.get("email")
+    name = request.json.get("name")    
+    try:
+        sendMailtoGuest(name,email)
+    except Exception as e:
+        print(f"Error during mail sending: {e}")
+    return jsonify({"status": 'mail send'})
+
+
+@app.route('/generate', methods=['POST'])
+def generate_mcqs():
+    if 'file' in request.files:
+            file = request.files['file']
+
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+
+                # Extract text from the uploaded file
+                text = extract_text_from_file(file_path)
     else:
-        # Construct response for non-flagged content
-        response = {
-            "status": "success",
-            "message": "Your input passed moderation checks.",
-        }
-    
-    return json.dumps(response, indent=4)
+        text_input = request.form['text_input']
+        if 'http'in text_input:
+            text = url_to_text(text_input)
+        else:
+            text = text_input
+
+    if text:
+            num_questions = int(request.form['no_questions'])
+            level_mcq = str(request.form['level_mcq'])
+            mcqs = Question_mcqs_generator(text, num_questions,level_mcq)
+
+            # Save the generated MCQs to a file
+            txt_filename = f"generated_mcqs.txt"
+            pdf_filename = f"generated_mcqs.pdf"
+            save_mcqs_to_file(mcqs, txt_filename)
+            create_pdf(mcqs, pdf_filename)
+
+            # Display and allow downloading
+            text = f'/download/{txt_filename}'
+            pdf = f'/download/{pdf_filename}'
+            # return render_template('results.html', mcqs=mcqs, txt_filename=txt_filename, pdf_filename=pdf_filename)
+            rendered_html = render_template('mcq_template.html', mcqs=mcqs, txt_filename=txt_filename, pdf_filename=pdf_filename)
+
+            # Save the rendered HTML to a file
+            html_file_path = os.path.join('templates', 'mcq_result.html')
+            with open(html_file_path, 'w') as html_file:
+                html_file.write(rendered_html)
+            return jsonify({'textpath': text,'pdfpath':pdf,"html_path": f"/view/{os.path.basename(html_file_path)}"}), 200
+    return "Invalid file format"
+
+@app.route('/generate_ppt', methods=['POST'])
+def generate_ppt():
+    try:
+        # Parse user input
+        if 'file' in request.files:
+            file = request.files['file']
+
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+
+                # Extract text from the uploaded file
+                text = extract_text_from_file(file_path)
+        else:
+            text_input = request.form['text_input']
+            if 'http'in text_input:
+                text = url_to_text(text_input)
+            else:
+                text = text_input
+
+
+
+
+        # Use OpenAI to generate content
+        no_slides = int(request.form['no_slides'])
+        generated_content = getPPTContent(text,no_slides)
+        # Parse content into slides (custom parsing logic can be added)
+        slides = generated_content.split("\n\n")
+
+        # Create a PowerPoint presentation
+        try:
+            filename = 'generated_presentation.pptx'
+            savePPTFile(slides,filename)
+        except Exception as e:
+            print(e)
+
+        # Return the path to the frontend
+        return jsonify({"ppt_path": f'/download/{filename}'})
+
+    except Exception as e:
+        # Save the presentation
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/generate_syllabus', methods=['POST'])
+def generate_syllabus():
+    try:
+        # Use OpenAI to generate content
+        no_session = request.form['no_session']
+        hr_session = request.form['hr_session']
+        month_session = request.form['month_session']
+        course_info = request.form['course_info']
+        syllabus = getSyllabus(course_info,no_session,hr_session,month_session)
+        sections = [section.strip() for section in syllabus.split('##') if section.strip()]
+
+        rendered_html = render_template('syllabus_template.html', sections=sections)
+            # Save the rendered HTML to a file
+        html_file_path = os.path.join('templates', 'syllabus_result.html')
+        with open(html_file_path, 'w') as html_file:
+            html_file.write(rendered_html)
+        # Return the path to the frontend
+        return jsonify({"syllabus_path": f"/view/{os.path.basename(html_file_path)}"})
+
+    except Exception as e:
+        # Save the presentation
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    file_path = os.path.join(app.config['RESULTS_FOLDER'], filename)
+    return send_file(file_path, as_attachment=True)
+
+@app.route('/view/<filename>')
+def view_html(filename):
+    # Serve the generated HTML file
+    return render_template(f'{filename}')
+
+def sendMailtoGuest(recipient_name,email):
+    with app.app_context():
+        with open('templates/mailTemplate.html', 'r') as file:
+            template = file.read()
+
+        # Render the template with the recipient's name
+        rendered_template = render_template_string(template, name=recipient_name)
+        send_email(rendered_template,email,'Welcome to San francisco bay university!',True)
 
 if __name__ == '__main__':
-    app.run(debug=False,port=5000)
+    app.run(debug=True,port=4000)
 #torch                    2.5.1
+
+

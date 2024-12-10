@@ -19,6 +19,10 @@
 body{
   background-color: beige;
   background-image: url("images/sfbu_back.png");
+  background-size: cover; /* Ensures the image covers the entire screen */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-position: center; /* Centers the image */
+  background-attachment: fixed; /* Keeps the image fixed on scroll */
 }
 
 /* Custom styles for SFBU-themed colors and chat bubbles */
@@ -108,7 +112,7 @@ transition: border-color 0.3s ease;
 }
 .recording-interface {
 position: relative;
-bottom: 0;
+/* bottom: 0; */
 left: 0;
 right: 0;
 top: 90px;
@@ -118,7 +122,7 @@ transition: transform 0.3s ease;
 box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
 width: 24rem;
 margin: 0 auto;
-/* margin-bottom: 49px; */
+margin-bottom: 15px;
 border-radius: 0px 0px 5px 5px;
 }
 
@@ -285,4 +289,305 @@ border-color: #c59c65;
 #main-container .chat-bubble {
   position: relative;
   /* z-index: 1; */
+}
+.bot-container {
+  top: 20rem;
+  left: 48rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  max-width: 320px;
+  /* background-color: #ffffff; */
+  border-radius: 8px;
+  cursor: pointer;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280; /* Gray */
+}
+
+.close-button:hover {
+  color: #374151; /* Darker Gray */
+}
+
+.bot-icon {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background-color: #c59c65;
+  background: radial-gradient(circle at top left, #d4b07c, #c59c65); /* Adds depth */
+  /* box-shadow: 
+    8px 4px 8px rgba(0, 0, 0, 0.1), 
+    -4px -4px 8px rgba(255, 255, 255, 0.5); */
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
+}
+
+/* Hover Effect */
+.bot-icon:hover {
+  transform: scale(1.1); /* Slightly enlarges the element */
+  box-shadow: 
+    6px 6px 6px rgba(0, 0, 0, 0.1), /* Increases shadow for "pop up" effect */
+    -6px -6px 6px rgba(255, 255, 255, 0.2); /* Enhances highlight */
+    background-color: #ececec;
+}
+
+
+
+.bot-intro {
+  margin-left: 16px;
+  background-color: #c59c65;
+  border-radius: 5px;
+  padding: 10px;
+
+}
+
+.bot-title {
+  font-weight: 600;
+  color: #374151; /* Dark Gray */
+}
+
+.bot-description {
+  font-size: 15px;
+  color: white; /* Gray */
+  font-weight: bolder;
+}
+
+/* #main-container{
+  margin-left: 20rem;
 } */
+
+.bot-student,
+.bot-guest{
+  cursor: pointer;
+  margin-left: 16px;
+  background-color: #c59c65;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Toast Popup Styling */
+.toast {
+  position: fixed;  
+  padding: 10px;
+  background-color: #c59c65;
+  border: 1px solid #003366;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+}
+
+.toast.show {
+  display: block; /* Show when needed */
+  /* animation: fadeIn 0.5s ease-in-out; */
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#main-container{
+  animation: fadeIn 0.8s ease-in-out; 
+  
+}
+
+.main-menu{
+  background: #cde6ff;
+  color: #080606;
+  border: 1px;
+  padding: 5px 10px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 5px;
+  border-style: solid;
+  border-color: darkgoldenrod;
+}
+
+.main-menu:hover {
+  transform: scale(1.1); /* Slightly enlarges the element */
+    background-color: #0667c9;
+    .opt-title{
+      font-size: smaller;
+      color: white;
+      text-align: center;
+    }
+}
+.opt-title{
+  font-size: smaller;
+  color: black;
+  text-align: center;
+}
+.bot-bubble-auto{
+  color: #333;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+.chat-bubble-auto{
+  max-width: 75%;
+    /* padding: 12px 16px; */
+    font-size: 0.875rem;
+}
+a.link-url{
+  color: #003366;
+  text-decoration:underline !important;
+}
+a.link-url:hover{
+  color: #0c9fdf;
+}
+.bot-student:hover,.bot-guest:hover{
+  background-color: #ecae5c;
+
+}
+
+.end-chat{
+  /* background-color: #e3000a9e; */
+  /* border-radius: 5px; */
+  padding: 5px;
+  color: beige;
+  height: 30px;
+  cursor: pointer;
+}
+.end-chat:hover{
+  background-color: #ff303b9e;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.new-chat{
+  /* background-color: #0892319e; */
+  /* border-radius: 5px; */
+  padding: 5px;
+  color: beige;
+  height: 30px;
+  cursor: pointer;
+}
+.new-chat:hover{
+  background-color: #27df6db0;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.new-language{
+  /* border-radius: 5px; */
+  padding: 5px;
+  color: black;
+  height: 30px;
+  cursor: pointer;
+}
+
+.new-language:hover{
+  background-color: #c59c65;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.option-menu{
+  justify-content: space-between;
+  height: 30px;
+  background-color: #003366;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.escalate-chat {
+  background-color: #064585;
+  padding-top: 2px;
+  padding-left: 4px;
+  color: beige;
+  height: 55px;
+  cursor: pointer;
+  font-size: 15px;
+  display: inline-block;
+  position: relative;
+  /* overflow: hidden; */
+}
+
+.escalate-chat p {
+  display: inline-block;
+  position: relative;
+  transform: translateX(100%);
+  animation: slideIn 3s forwards;
+  text-decoration: underline;
+}
+
+.escalate-chat:hover {
+  background-color: #045eb9;
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+.chat-bubble-auto-fac{
+  width:  50rem;
+  font-size: 0.875rem;
+}
+
+.bot-bubble-auto-fac{
+  color: #333;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.main-menu:hover {
+  transform: scale(1.1); /* Slightly enlarges the element */
+    background-color: #0667c9;
+    .opt-title-fac{
+      font-size: smaller;
+      color: white;
+      text-align: center;
+    }
+}
+.opt-title-fac{
+  /* font-size: smaller; */
+  color: black;
+  text-align: center;
+}
+
+.gen-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.gen-button:hover {
+  background-color: #218838;
+}
+
+.new-fac-chat{
+  background-color: #003366;
+  border-radius: 5px 5px 0px 0px;
+  padding: 5px;
+  p{
+    color: beige;
+   }
+}
+.new-fac-chat:hover{
+ background-color: #034a91;
+ p{
+  color: beige;
+ }
+}

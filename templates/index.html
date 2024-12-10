@@ -13,7 +13,7 @@
     <!-- Chat Container -->
     <div
       id="main-container"
-      class="w-96 h-[650px] bg-gray-300 border-2 border-[#003366] rounded-lg overflow-hidden custom-shadow flex flex-col"
+      class="w-96 h-[650px] bg-gray-300 border-2 border-[#003366] rounded-lg overflow-hidden custom-shadow flex flex-col hidden"
     >
       <!-- Increased width and height -->
       <!-- Header -->
@@ -24,10 +24,17 @@
             alt="SFBU Logo"
             class="header-logo"
           />
+          <div style="
+          margin-left: 8rem;
+          z-index: 1;cursor: pointer;
+      " onclick="CloseBot();"><svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+                  </svg></div>
         </div>
       </div>
 
       <!-- Chat Messages -->
+      <div class="escalate-chat hidden" onclick="escalate_chat();" id="chat-escalate"><p>Need more help? <strong>Click here</strong>, our team will contact you!</p></div>
       <div
         id="chat-container"
         class="p-4 space-y-4 overflow-y-auto flex-grow mb-2 no-scrollbar"
@@ -35,10 +42,165 @@
       >
         <!-- Increased chat container height -->
         <!-- Initial Bot Message -->
-        <div class="flex">
-          <div class="chat-bubble bot-bubble">Hello, how can I help you?</div>
+        <div class="flex default">
+          <div class="chat-bubble bot-bubble default">Hello, how can I help you?</div>
         </div>
+        <div class="chat-bubble-auto bot-bubble-auto default hidden" id="guest-menu">
+          <div class="flex default">
+          <div class="main-menu default" id="opt-admission" onclick="ShowSubmenu(this);">
+            <p class="opt-title">Admission</p>
+          </div>
+          <div class="main-menu default" id="opt-financial"  onclick="ShowSubmenu(this);">
+            <p class="opt-title">Financial Support</p>
+          </div>
+        </div>
+        <div class="flex default">
+          <div class="main-menu default" id="opt-request" onclick="ShowSubmenu(this);">
+            <p class="opt-title">Request Information</p>
+          </div>
+         
+          <div class="main-menu default" id="opt-apply" onclick="ShowSubmenu(this);">
+            <p class="opt-title">Apply</p>
+          </div>
+        </div>
+        <div class="flex default">
+          <div class="main-menu default" id="opt-campus" onclick="ShowSubmenu(this);">
+            <p class="opt-title">Campus Life</p>
+          </div>
+          <div class="main-menu default" id="opt-visit" onclick="ShowSubmenu(this);">
+            <p class="opt-title">Schedule Visit</p>
+          </div>
+        </div>
+        </div>
+        <div class="chat-bubble-auto bot-bubble-auto default hidden" id="student-menu">
+          <div class="flex default">
+          <div class="main-menu default" id="opt-registration" onclick="ShowStudentSubmenu(this);">
+            <p class="opt-title">Course Registration</p>
+          </div>
+          <div class="main-menu default" id="opt-housing"  onclick="ShowStudentSubmenu(this);">
+            <p class="opt-title">Housing</p>
+          </div>
+        </div>
+        <div class="flex default">
+          <div class="main-menu default" id="opt-scholor" onclick="ShowStudentSubmenu(this);">
+            <p class="opt-title">Scholorships</p>
+          </div>
+         
+          <div class="main-menu default" id="opt-apply" onclick="ShowStudentSubmenu(this);">
+            <p class="opt-title">SFBU Online Store</p>
+          </div>
+        </div>
+        <div class="flex default">
+          <div class="main-menu default" id="opt-employ" onclick="ShowStudentSubmenu(this);">
+            <p class="opt-title">Employement</p>
+          </div>
+          <div class="main-menu default" id="opt-clubs" onclick="ShowStudentSubmenu(this);">
+            <p class="opt-title">IT Support</p>
+          </div>
+        </div>
+        </div>
+       
       </div>
+      <div class="flex option-menu hidden" id="menu-options">
+      <div class="new-chat" id="chat-new" onclick="ClearChat();"><p>New Chat</p></div>
+      <div class="new-language">
+                <select id="language" name="language" form="customer-form">
+                    <option value="English" {% if language == "English" %}selected{% endif %}>English</option>
+                    <option value="Spanish" {% if language == "Spanish" %}selected{% endif %}>Spanish</option>
+                    <option value="Chinese" {% if language == "Chinese" %}selected{% endif %}>Chinese</option>
+                    <option value="French" {% if language == "French" %}selected{% endif %}>French</option>
+                    <option value="German" {% if language == "German" %}selected{% endif %}>German</option>
+                    <option value="Italian" {% if language == "Italian" %}selected{% endif %}>Italian</option>
+                    <option value="Portuguese" {% if language == "Portuguese" %}selected{% endif %}>Portuguese</option>
+                    <option value="Russian" {% if language == "Russian" %}selected{% endif %}>Russian</option>
+                    <option value="Japanese" {% if language == "Japanese" %}selected{% endif %}>Japanese</option>
+                    <option value="Korean" {% if language == "Korean" %}selected{% endif %}>Korean</option>
+                    <option value="Arabic" {% if language == "Arabic" %}selected{% endif %}>Arabic</option>
+                    <option value="Hindi" {% if language == "Hindi" %}selected{% endif %}>Hindi</option>
+                    <option value="Bengali" {% if language == "Bengali" %}selected{% endif %}>Bengali</option>
+                    <option value="Dutch" {% if language == "Dutch" %}selected{% endif %}>Dutch</option>
+                    <option value="Turkish" {% if language == "Turkish" %}selected{% endif %}>Turkish</option>
+                    <option value="Vietnamese" {% if language == "Vietnamese" %}selected{% endif %}>Vietnamese</option>
+                    <option value="Swedish" {% if language == "Swedish" %}selected{% endif %}>Swedish</option>
+                    <option value="Greek" {% if language == "Greek" %}selected{% endif %}>Greek</option>
+                    <option value="Hebrew" {% if language == "Hebrew" %}selected{% endif %}>Hebrew</option>
+                    <option value="Polish" {% if language == "Polish" %}selected{% endif %}>Polish</option>
+                    <option value="Danish" {% if language == "Danish" %}selected{% endif %}>Danish</option>
+                    <option value="Finnish" {% if language == "Finnish" %}selected{% endif %}>Finnish</option>
+                    <option value="Norwegian" {% if language == "Norwegian" %}selected{% endif %}>Norwegian</option>
+                    <option value="Indonesian" {% if language == "Indonesian" %}selected{% endif %}>Indonesian</option>
+                    <option value="Malay" {% if language == "Malay" %}selected{% endif %}>Malay</option>
+                    <option value="Romanian" {% if language == "Romanian" %}selected{% endif %}>Romanian</option>
+                    <option value="Czech" {% if language == "Czech" %}selected{% endif %}>Czech</option>
+                    <option value="Hungarian" {% if language == "Hungarian" %}selected{% endif %}>Hungarian</option>
+                    <option value="Ukrainian" {% if language == "Ukrainian" %}selected{% endif %}>Ukrainian</option>
+                    <option value="Thai" {% if language == "Thai" %}selected{% endif %}>Thai</option>
+                    <option value="Tamil" {% if language == "Tamil" %}selected{% endif %}>Tamil</option>
+                    <option value="Telugu" {% if language == "Telugu" %}selected{% endif %}>Telugu</option>
+                    <option value="Urdu" {% if language == "Urdu" %}selected{% endif %}>Urdu</option>
+                    <option value="Gujarati" {% if language == "Gujarati" %}selected{% endif %}>Gujarati</option>
+                    <option value="Punjabi" {% if language == "Punjabi" %}selected{% endif %}>Punjabi</option>
+                    <option value="Marathi" {% if language == "Marathi" %}selected{% endif %}>Marathi</option>
+                    <option value="Persian" {% if language == "Persian" %}selected{% endif %}>Persian</option>
+                    <option value="Swahili" {% if language == "Swahili" %}selected{% endif %}>Swahili</option>
+                    <option value="Filipino" {% if language == "Filipino" %}selected{% endif %}>Filipino</option>
+                </select>
+                
+            </div>
+      <div class="end-chat" id="chat-end" onclick="EndChat();"><p>End Chat</p></div>
+    </div>
+      <div class="flex absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" id="login-type">
+        <div class="bot-student" onclick="LoginStudent();">
+        <p class="bot-title">Student</p>
+        
+      </div>
+      <div class="bot-guest" onclick="LoginGuest();">
+        <p class="bot-title">Guest</p>
+        
+      </div></div>
+        <!-- Toast Popup -->
+<div id="email-toast" class="toast hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+  <div style="
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  cursor: pointer; 
+  z-index: 1;" 
+onclick="CloseVisiterType();">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="black">
+<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+</svg>
+</div>
+  <p class="mb-2">Enter your name:</p>
+  <input style="padding: 5px;border-radius: 5px;" type="text" id="visitor-name" placeholder="Enter your name" required />
+  <p class="mb-2 mt-2">Enter your email:</p>
+  <input style="padding: 5px;border-radius: 5px;" type="email" id="user-email" placeholder="Enter your email" required /><br>
+  <div style="display: flex;justify-content: center;">
+
+    <button class="mt-2" style="border-style: solid;padding: 5px;border-radius: 5px;background: #003366;color: #ffffff;" id="submit-email">Submit</button>
+  </div>
+</div>
+<div id="student-toast" class="toast hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+  <div style="
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  cursor: pointer; 
+  z-index: 1;" 
+onclick="CloseVisiterType();">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="black">
+<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+</svg>
+</div>
+  <p class="mb-2">Username:</p>
+  <input style="padding: 5px;border-radius: 5px;" type="text" id="user-name" placeholder="Enter your username" required />
+  <p class="mb-2 mt-2">Password:</p>
+  <input style="padding: 5px;border-radius: 5px;" type="password" id="user-password" placeholder="Enter your password" required /><br>
+  <div style="display: flex;justify-content: center;">
+    <button class="mt-2" style="border-style: solid;padding: 5px;border-radius: 5px;background: #003366;color: #ffffff;" id="submit-cred">Submit</button>
+  </div>
+</div>
+
       <img
         id="spinner"
         src="static/images/bh2.gif"
@@ -78,8 +240,7 @@
         </div>
       </div>
       <div
-        style="margin-top: 20px"
-        class="header-bg p-4 flex items-center justify-between"
+        class="header-bg p-4 flex items-center justify-between hidden" id="controller-footer"
       >
         <input
           type="text"
@@ -107,8 +268,31 @@
           </svg>
         </button>
       </div>
+      
     </div>
-
+    <div class="bot-container" id="bot-container-box" onclick="OpenBot();">
+      <!-- Close Button -->
+      <button class="close-button" aria-label="close text box">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <path class="primary" d="M255.1 222.1..."></path>
+          <path class="secondary" d="M0 256..."></path>
+        </svg>
+      </button>
+      <!-- Bot Image -->
+      <img
+        src="static/images/bayhawk.png"
+        alt="Bot Icon"
+        class="bot-icon"
+      />
+      <!-- Intro Text -->
+      <div class="bot-intro">
+        <p class="bot-title">Hi, I'm Bayhawk Bot!</p>
+        <p class="bot-description">
+          I'm here to help.
+        </p>
+      </div>
+    </div>
+    
     <script src="static/script.js"></script>
   </body>
 </html>

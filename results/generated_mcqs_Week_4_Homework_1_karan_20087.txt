@@ -1,0 +1,39 @@
+## MCQ 1
+Question: What is the project DS565 about?
+A) A research paper on Artificial Intelligence
+B) Developing a Mobile App
+C) A Flask-based web application that uses OpenAI GPT-3.5-Turbo for creating a customer support system
+D) A course on operating systems
+Correct Answer: C) A Flask-based web application that uses OpenAI GPT-3.5-Turbo for creating a customer support system
+
+## MCQ 2
+Question: Which files and folders form the structure of the Project DS565?
+A) app.py, design.py, render.py 
+B) app.py, config.py, .env, static/ and templates/
+C) .env, static/, scripts/
+D) main.py, .env, config.py
+Correct Answer: B) app.py, config.py, .env, static/ and templates/
+
+## MCQ 3
+Question: What are the prerequisites for the project DS565?
+A) Python 2.7, Flask
+B) CrowdStrike Python SDK, OpenAI API Key
+C) Flask-Mail, Python-dotenv, OpenAI Python SDK, Flask, Python 3.8+
+D) Java, SMTP credentials, Python 3.5+
+Correct Answer: C) Flask-Mail, Python-dotenv, OpenAI Python SDK, Flask, Python 3.8+
+
+## MCQ 4
+Question: What is the purpose of the OpenAI API in this project?
+A) Debugging the application
+B) Creating presentations
+C) Generating customer comments, email subjects, performing sentiment analysis, and generating final email content
+D) Testing the final output
+Correct Answer: C) Generating customer comments, email subjects, performing sentiment analysis, and generating final email content
+
+## MCQ 5
+Question: Which function is used to generate the final email content?
+A) generate_email
+B) create_content
+C) generate_email_content
+D) write_email
+Correct Answer: C) generate_email_content
